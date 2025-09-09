@@ -1,0 +1,72 @@
+{% extends 'attendance/base.html' %} {% block title %}Registrar Ponto{% endblock %} 
+{% block content %}
+<div class="max-w-lg mx-auto bg-white rounded-2xl shadow-sm border p-6">
+  <div class="flex items-start gap-3 mb-4">
+    <div
+      class="w-9 h-9 rounded-xl bg-brand-600 text-white grid place-items-center"
+    >
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 20a1 1 0 01-1-1v-2a1 1 0 112 0v2a1 1 0 01-1 1zM3 13H1a1 1 0 110-2h2a1 1 0 110 2zm20 0h-2a1 1 0 110-2h2a1 1 0 110 2z"
+        />
+      </svg>
+    </div>
+    <div>
+      <h1 class="text-xl font-semibold">Registrar ponto</h1>
+      <p class="text-sm text-slate-600">
+        Sessão de {{ session.date }}. Informe seu <strong>CPF</strong> e, no
+        primeiro acesso, seu <strong>Nome</strong>.
+      </p>
+    </div>
+  </div>
+
+  {% if success %} {% if action == 'entrada' %}
+  <div
+    class="mb-4 p-3 rounded-lg bg-success-50 text-success-600 border border-success-500/20"
+  >
+    Entrada registrada. Bom trabalho! ⏰
+  </div>
+  {% elif action == 'saida' %}
+  <div
+    class="mb-4 p-3 rounded-lg bg-brand-50 text-brand-700 border border-brand-500/20"
+  >
+    Saída registrada. Até a próxima! ✅
+  </div>
+  {% else %}
+  <div
+    class="mb-4 p-3 rounded-lg bg-warning-50 text-warning-600 border border-warning-500/20"
+  >
+    Você já concluiu entrada e saída hoje.
+  </div>
+  {% endif %} {% endif %}
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    <div>
+      <label class="block text-sm font-medium mb-1">CPF</label>
+      <input
+        name="cpf"
+        maxlength="14"
+        required
+        class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+        placeholder="000.000.000-00"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Nome</label>
+      <input
+        name="name"
+        class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+        placeholder="Seu nome completo (somente no primeiro acesso)"
+      />
+    </div>
+
+    <button
+      class="w-full bg-brand-600 text-white rounded-lg px-4 py-2.5 hover:bg-brand-700 transition shadow-sm"
+    >
+      Confirmar
+    </button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'attendance/base.html' %}
+{% load attendance_extras %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight">Registros de {{ date }}</h1>
+      <p class="text-sm text-slate-600">Acompanhe batidas do dia, exporte CSV e pesquise por nome.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="{% url 'export_csv' %}" class="px-3 py-2 text-sm rounded-lg bg-white border shadow-sm hover:bg-slate-50 transition">Exportar CSV</a>
+    </div>
+  </div>
+
+  <form method="get" class="mb-4">
+    <div class="relative max-w-sm">
+      <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4a6 6 0 014.472 9.985l4.271 4.272-1.414 1.414-4.272-4.271A6 6 0 1110 4zm0 2a4 4 0 100 8 4 4 0 000-8z"/></svg>
+      <input name="q" value="{{ query }}" placeholder="Buscar por nome"
+             class="pl-9 pr-3 py-2 w-full rounded-lg border bg-white outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" />
+    </div>
+  </form>
+
+  <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-slate-600 border-b">
+          <tr>
+            <th class="text-left px-4 py-2">Nome</th>
+            <th class="text-left px-4 py-2">ID</th>
+            <th class="text-left px-4 py-2">CPF</th>
+            <th class="text-left px-4 py-2">Entrada</th>
+            <th class="text-left px-4 py-2">Saída</th>
+            <th class="text-left px-4 py-2">Horas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+            <tr class="border-t hover:bg-slate-50/60">
+              <td class="px-4 py-2 font-medium">{{ r.employee.name }}</td>
+              <td class="px-4 py-2 tabular-nums">{{ r.employee.employee_id }}</td>
+              <td class="px-4 py-2 tabular-nums">{{ r.employee.cpf|cpf_mask }}</td>
+              <td class="px-4 py-2">{% if r.check_in %}{{ r.check_in|date:'H:i' }}{% endif %}</td>
+              <td class="px-4 py-2">{% if r.check_out %}{{ r.check_out|date:'H:i' }}{% endif %}</td>
+              <td class="px-4 py-2">{{ r.hours_worked|duration_hhmm }}min</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td class="px-4 py-6 text-center text-slate-500" colspan="6">Sem registros ainda.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-4 text-sm text-slate-700">
+    Total do dia:
+    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 border">{{ total_label }}</span>
+  </div>
+{% endblock %}

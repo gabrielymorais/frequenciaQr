@@ -1,0 +1,74 @@
+{% extends 'attendance/base.html' %}
+{% block title %}QR do Dia{% endblock %}
+{% block content %}
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl shadow-sm border p-6">
+      <h1 class="text-xl font-semibold mb-1">QR do dia — {{ session.date }}</h1>
+      <p class="text-sm text-slate-600 mb-4">
+        Exiba este QR na entrada. Colaboradores devem escanear para registrar
+        entrada/saída.
+      </p>
+
+      <div class="flex flex-col items-center gap-3">
+        <div class="p-3 rounded-xl border bg-slate-50">
+          <img
+            class="w-64 h-64"
+            src="{% url 'kiosk_qr_png' %}?v={{ session.token }}"
+            alt="QR do dia"
+            onerror="this.onerror=null; this.src='data:image/png;base64,{{ qr_base64|safe }}';"
+          />
+        </div>
+
+        <code id="qr-url" class="text-[11px] md:text-xs bg-slate-100 px-2 py-1 rounded select-all">
+          {{ url }}
+        </code>
+
+        <div class="flex items-center gap-2 mt-2">
+          <button id="copy-btn" class="px-3 py-2 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 transition">
+            Copiar link
+          </button>
+          <button onclick="window.print()" class="px-3 py-2 text-sm rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition">
+            Imprimir
+          </button>
+        </div>
+        <p id="copy-feedback" class="text-xs text-success-600 hidden">Link copiado! ✅</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border p-6">
+      <h2 class="font-semibold mb-3">Como usar</h2>
+      <ol class="space-y-2 text-sm text-slate-700 list-decimal list-inside">
+        <li>Escaneie o QR com a câmera do celular.</li>
+        <li>No primeiro acesso, informe <strong>CPF</strong> e <strong>Nome</strong>.</li>
+        <li>Primeira batida registra <strong>Entrada</strong>; a segunda registra <strong>Saída</strong>.</li>
+        <li>O dashboard mostra total de horas e permite <strong>exportar CSV</strong>.</li>
+      </ol>
+
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <a href="{% url 'dashboard' %}" class="w-full text-center px-4 py-2 rounded-lg border hover:bg-slate-50 transition">
+          Abrir Dashboard
+        </a>
+        <a href="{% url 'kiosk_qr' %}" class="w-full text-center px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition">
+          Gerar/Atualizar QR
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block body_end %}
+<script>
+  const btn = document.getElementById("copy-btn");
+  const urlEl = document.getElementById("qr-url");
+  const fb = document.getElementById("copy-feedback");
+  if (btn && urlEl) {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(urlEl.textContent.trim());
+        fb?.classList.remove("hidden");
+        setTimeout(() => fb?.classList.add("hidden"), 1800);
+      } catch {}
+    });
+  }
+</script>
+{% endblock %}
