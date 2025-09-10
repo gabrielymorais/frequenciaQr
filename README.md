@@ -76,9 +76,9 @@ ipconfig
 ```
 http://SEU_IP:8000/session/new/
 ```
-- 3 Escaneie com o celular e preencha CPF e Mome Completo
-- 1° batida → Entrada
-- 2° batida → Saída
+- 3 Escaneie com o celular e preencha CPF e Nome Completo
+   - 1° batida → Entrada
+   - 2° batida → Saída
 
 ### 🗂️ Estrutura do projeto
 ```
